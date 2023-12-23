@@ -11,7 +11,6 @@ dbc_file: the .dbc file name of the DBC file, with the realtive directory
             eg- DBC_dir/chassis_kia_soul_ev.dbc
 data_file: the file name and realtive directory of the data file
             eg- data_dir/can0_rostopic.txt
-de_file: the file name for the saving the decrypted can data
 
 """
 
@@ -25,18 +24,25 @@ import os
 
 import json
 
+DECODED_OUTPUT_JSONS_FOLDER = "decoded_output_jsons"
+os.makedirs(DECODED_OUTPUT_JSONS_FOLDER)
+
+def save_data(messages, previous_datetime_str):
+    try:
+        with open(f"{DECODED_OUTPUT_JSONS_FOLDER}/{previous_datetime_str}.json", 'w') as json_content:
+            json.dump(messages, json_content, indent=4)
+    except Exception as e:
+        print(f"Error creating and saving file: {e}")
+
 def can_decoder(
         dbc_file="panther.dbc",
-        data_file='test.txt',
-        de_file='decoded_file'
+        data_file='test.txt'
     ):
-    decoded_output_jsons_folder = "decoded_output_jsons"
     previous_datetime_str = ""
     message = ""
     allMessages = []
     log_data = {}
 
-    os.makedirs(decoded_output_jsons_folder)
     # ----------------Loading the dbc file ---------------------
     db = cantools.database.load_file(dbc_file)
 
@@ -70,18 +76,14 @@ def can_decoder(
         timestamp_str = line.split(';')[0]
         date_part = date_str.split('T')[0]
         timestamp_part = timestamp_str.split('T')[1]  # Extracting time part after 'T'
-        datetime_str = date_part + 'T' + timestamp_part  # Combining date and 
-                
+        datetime_str = date_part + 'T' + timestamp_part  # Combining date and
+
         if datetime_str != previous_datetime_str:
             previous_datetime_str = datetime_str
-            try:
-                log_data[previous_datetime_str] = allMessages
-                with open(f"{decoded_output_jsons_folder}/{previous_datetime_str}.json", 'w') as json_content:
-                    json.dump(log_data, json_content, indent=4)
-                log_data = {}
-                allMessages = []
-            except Exception as e:
-                print(f"Error creating and saving file: {e}")
+            log_data[previous_datetime_str] = allMessages
+            save_data(allMessages, previous_datetime_str)
+            log_data = {}
+            allMessages = []
 
         # Parsing ID and Data using dbc file
         can_id_str = "0x" + line.split(';')[2].strip()
@@ -104,5 +106,8 @@ def can_decoder(
             print(message)
         except Exception as e:
             print(f"Error: Unable to decode message for ID {can_id_str}. {e}")
+
+    save_data(allMessages, datetime_str)
+
 
 can_decoder()
