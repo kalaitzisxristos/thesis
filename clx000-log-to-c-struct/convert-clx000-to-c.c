@@ -23,10 +23,7 @@ int main () {
   size_t size = 0;
   while (getline(&line, &size, stdin) > -1) {
     if (line[0] < '0' || line[0] > '9') continue;
-
-    int lineIdx = 0;
-    while (line[++lineIdx] != '\n');
-    line[lineIdx] = '\0';
+    line[strcspn(line, "\r\n")] = 0;
 
     char *token = strtok(line, ";");
 
