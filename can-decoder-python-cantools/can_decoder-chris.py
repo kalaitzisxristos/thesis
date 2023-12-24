@@ -78,6 +78,9 @@ def can_decoder(
         timestamp_part = timestamp_str.split('T')[1]  # Extracting time part after 'T'
         datetime_str = date_part + 'T' + timestamp_part  # Combining date and
 
+        if previous_datetime_str == "":
+            previous_datetime_str = datetime_str
+
         if datetime_str != previous_datetime_str:
             previous_datetime_str = datetime_str
             log_data[previous_datetime_str] = allMessages
