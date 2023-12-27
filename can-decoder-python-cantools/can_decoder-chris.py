@@ -94,7 +94,6 @@ def can_decoder(
             if can_id_int not in db._frame_id_to_message:
                 continue
 
-
             message = db.decode_message(can_id_int, bytearray.fromhex(can_data))
             allMessages.extend(
                 {
