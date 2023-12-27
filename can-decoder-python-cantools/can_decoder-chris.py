@@ -16,16 +16,13 @@ data_file: the file name and realtive directory of the data file
 
 #----------------Importing Packages-----------------------------------------------------
 import cantools
-import numpy as np
-import can
 import re
-from binascii import hexlify
 import os
-
 import json
+from numbers import Number
 
 DECODED_OUTPUT_JSONS_FOLDER = "decoded_output_jsons"
-os.makedirs(DECODED_OUTPUT_JSONS_FOLDER)
+os.makedirs(DECODED_OUTPUT_JSONS_FOLDER, exist_ok=True)
 
 def save_data(messages, previous_datetime_str):
     try:
@@ -47,7 +44,7 @@ def can_decoder(
     db = cantools.database.load_file(dbc_file)
 
     ## ----------------Creating a dictionary--------------------
-    ref = {'seq': 0, 'time': 1, 'id': 2, 'is_error': 3, 'data': 4}
+    signal_dict = {y.name: y.unit for x in db.messages for y in x.signals}
 
     # ------Loading the data log file---------------------------
     data = open(data_file, 'r')
@@ -74,9 +71,8 @@ def can_decoder(
 
         # Parsing the timestamp
         timestamp_str = line.split(';')[0]
-        date_part = date_str.split('T')[0]
-        timestamp_part = timestamp_str.split('T')[1]  # Extracting time part after 'T'
-        datetime_str = date_part + 'T' + timestamp_part  # Combining date and
+        date_part, timestamp_part = timestamp_str.split('T')  # Extracting time part before and after 'T'
+        datetime_str = date_part + 'T' + timestamp_part  # Combining date and time
 
         if previous_datetime_str == "":
             previous_datetime_str = datetime_str
@@ -98,9 +94,16 @@ def can_decoder(
             if can_id_int not in db._frame_id_to_message:
                 continue
 
+
             message = db.decode_message(can_id_int, bytearray.fromhex(can_data))
             allMessages.extend(
-                {"canbus_id": can_id_str,"canbus_id_name": key, "value": str(value)}
+                {
+                    "canbus_id": can_id_str,
+                    "canbus_id_name": key,
+                    "value": round(value, 6) if isinstance(value, Number) else 0,
+                    "value_text": str(value) if not isinstance(value, (int, float)) else "",
+                    "unit": signal_dict.get(key)
+                }
                 for key, value in message.items()
             )
             # print("Decoded Message:", json.dumps(message))
