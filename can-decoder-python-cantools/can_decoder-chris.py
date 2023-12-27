@@ -87,7 +87,6 @@ def can_decoder(
         # Parsing ID and Data using dbc file
         can_id_str = "0x" + line.split(';')[2].strip()
         can_id_int = int(can_id_str, 16)
-        can_id_hex = hex(can_id_int)
         can_data = line.split(';')[3].strip()
 
         try:
