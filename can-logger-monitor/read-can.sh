@@ -67,7 +67,7 @@ cat "${DEVICE}" | while read line; do (
   done
 
   # _time="$(echo "${_time}" | rev | sed 's/^\(......\)/\1,' | rev)"}
-  _time="$(date +%s%3N | rev | sed "s/^\(...\)/\1./" | rev)"
+  _time="$(date +%s%3N | sed "s/\(...\)$/.\1/")"
 
   _address="00000000${_address}"
   _address="${_address: -8}"
