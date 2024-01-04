@@ -12,7 +12,7 @@ files.sort()
 for file in files:
     try:
         print("uploading " + file)
-        dt = datetime.fromisoformat(file.split('.')[0])
+        dt = datetime.fromtimestamp(float(file.split('.json')[0]))
 
         with open(JSONS_DIRECTORY + "/" + file, 'r') as content:
             response = requests.post(HASURA_URL, json={

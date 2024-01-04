@@ -50,29 +50,14 @@ def can_decoder(
     data = open(data_file, 'r')
     lines = data.readlines()
 
-    # Extracting date from comments
-    date_line = [line for line in lines if line.startswith("# Time:")][0]
-    date_match = re.search(r'\d{8}T\d{6}', date_line)
-    if date_match:
-        date_str = date_match.group(0)
-        print("Date extracted from comments:", date_str)
-
     # ------------------Parsing the log file--------------------
     for i, line in enumerate(lines):
         if not line.strip():
             print("This is the last line or an empty line.")
             break
-        if line.startswith("Timestamp"):
-            print("THIS IS THE HEADER: " + line.strip())
-            continue
-        if line.startswith("#"):
-            print("IGNORE COMMENT: " + line.strip())
-            continue
 
         # Parsing the timestamp
-        timestamp_str = line.split(';')[0]
-        date_part, timestamp_part = timestamp_str.split('T')  # Extracting time part before and after 'T'
-        datetime_str = date_part + 'T' + timestamp_part  # Combining date and time
+        datetime_str = line.split(' ')[0].split('(')[1].split(')')[0]
 
         if previous_datetime_str == "":
             previous_datetime_str = datetime_str
@@ -84,10 +69,12 @@ def can_decoder(
             log_data = {}
             allMessages = []
 
+        payload = line.split(' ')[2]
+
         # Parsing ID and Data using dbc file
-        can_id_str = "0x" + line.split(';')[2].strip()
+        can_id_str = "0x" + payload.split('#')[0].strip()
         can_id_int = int(can_id_str, 16)
-        can_data = line.split(';')[3].strip()
+        can_data = payload.split('#')[1].strip()
 
         try:
             if can_id_int not in db._frame_id_to_message:
