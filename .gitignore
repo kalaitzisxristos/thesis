@@ -1,2 +1,3 @@
-can-decoder-python-cantools/decoded_output_jsons/*
+*/decoded_output_jsons/*
+*/_decoded_output_jsons/*
 .history/*

@@ -36,7 +36,7 @@ for file in files:
             })
 
             response_json = response.json()
-            if len(response_json['errors']) > 0:
+            if 'errors' in response_json and len(response_json['errors']) > 0:
                 print(response_json)
     except Exception as e:
         print(f"Error reading file: {e}")

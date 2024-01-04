@@ -19,6 +19,7 @@ import cantools
 import re
 import os
 import json
+import sys
 from numbers import Number
 
 DECODED_OUTPUT_JSONS_FOLDER = "decoded_output_jsons"
@@ -101,4 +102,5 @@ def can_decoder(
     save_data(allMessages, datetime_str)
 
 
-can_decoder()
+# can_decoder()
+can_decoder(data_file=sys.argv[1])
