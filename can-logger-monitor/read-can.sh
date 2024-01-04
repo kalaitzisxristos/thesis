@@ -23,7 +23,8 @@ echo "WIFIMODE=0" > "${DEVICE}"
 
 echo "LAWICEL=1" > "${DEVICE}"
 
-cat "${DEVICE}" | while read line; do (
+# Discard current incoming line to prevent parsing errors
+cat "${DEVICE}" | ( head -n1 >/dev/null ; while read line; do (
   line="$(echo "${line}" | tr -d "\r")"
 
   _idx=0
@@ -80,5 +81,5 @@ cat "${DEVICE}" | while read line; do (
   # echo "ID: ${_address}"
   # echo "Payload: ${_payload}"
   echo "(${_time}) vcan0 ${_address}#${_payload}"
-) done
+) done )
 
