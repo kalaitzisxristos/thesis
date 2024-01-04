@@ -7,7 +7,7 @@ def write_to_file(file_number, lines):
         file.writelines(lines)
 
 def main():
-    file_size_limit = 1 * 1024 * 1024  # 1MB in bytes
+    file_size_limit = 100 * 1000
     lines = []
     current_timestamp = None
     current_file_number = 1
@@ -18,7 +18,7 @@ def main():
         if current_timestamp is None:
             current_timestamp = timestamp
 
-        if current_timestamp != timestamp and sys.getsizeof(lines) > file_size_limit:
+        if current_timestamp != timestamp and len(lines) > file_size_limit:
             write_to_file(current_file_number, lines)
             lines = []
             current_file_number += 1
