@@ -10,7 +10,7 @@ def main():
     file_size_limit = 100 * 1000
     lines = []
     current_timestamp = None
-    current_file_number = 1
+    current_file_number = 0
 
     for line in sys.stdin:
         timestamp = line.split(' ')[0]
