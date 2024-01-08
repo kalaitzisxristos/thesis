@@ -21,7 +21,7 @@ echo "LAWICEL=1" > "${DEVICE}"                            # Enable LAWICEL compa
 cat "${DEVICE}" | ( head -n1 >/dev/null ; while read line; do (
   line="$(echo "${line}" | tr -d "\r")"
 
-  _idx=1            # Initialize index for parsing
+  _idx=1                                                  # Initialize index for parsing
 
   # Initialize variables to store parsed values
   _payloadIdx=0
