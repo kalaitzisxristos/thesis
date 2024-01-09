@@ -20,7 +20,7 @@ process_file () {
         mkdir -p "$JSONS_DIRECTORY"
         cd "$JSONS_DIRECTORY/.."
         rm -rf "$JSONS_DIRECTORY/*"
-        python3 can_decoder-chris.py "../$file"
+        python3 can-decoder.py "../$file"
         echo "Finished converting file '$file'"
     )
 
